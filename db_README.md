@@ -9,7 +9,7 @@
 #1. Insert table for hp optimization
 	a. psql context -h 127.0.0.1 -d context #log into the database with the admin credentials
 	b. create table hpcombos (_id bigserial primary key, lesions varchar, alpha float, beta float, mu float, nu float, gamma float, delta float, f3a float, f3b float, f4 float, f5 float, f7 float, tbp float, tbtcso float, bw float); 
-	c. create table status (_id bigserial primary key, fig_names varchar, working boolean default false); 
+	c. create table status (_id bigserial primary key, fig_names varchar, working boolean default false);
 #Or just run: python start_hp_optims.py
 
 #Pachaya instructions:
@@ -19,3 +19,9 @@
 # Use dumb_hp_optim_# scripts to optimize hyperparameters.
 # Use restart_hp_optim_# scripts to randomize stimulus tuning or eCRF connectivity (i.e. gaussian connections)
 # The manuscript table is final_full_hpcombos
+
+##### Nates Notes
+
+#0. Run script by
+	a. sudo CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3a.py
+	#what is password

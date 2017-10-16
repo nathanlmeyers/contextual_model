@@ -15,7 +15,7 @@ from scipy import stats, special, array, dot, floor, ceil, around, absolute
 from scipy.interpolate import UnivariateSpline, LSQUnivariateSpline
 #from hmax.models.hnorm.computation import pool, hwrectify
 #from hmax.models.ucircuits.contextual import stimuli as stim
-# from hmax.models.ucircuits.contextual import contextual as cx
+#from hmax.models.ucircuits.contextual import contextual as cx
 from sklearn import preprocessing
 from matplotlib import pyplot as plt
 from matplotlib import patches
@@ -222,7 +222,7 @@ def decode_bayes(arr, axis=None, density=None, scale=None):
 #-----------------------------------------------------------------------------#
 def allow_multiple_stimulus_values(get_population):
     """ Decorator to allow for multiple stimulus values,
-    i.e., multimodal LN population responses. 
+    i.e., multimodal LN population responses.
     """
 
     def _get_population(*args, **kwargs):
@@ -366,7 +366,7 @@ def get_population_agaussian(stimulus, npoints=50, fdomain=DEFAULT_FDOMAIN,
 
     for idx, (loc, bs, sc) in enumerate(zip(loci, baselines, scales)):
         if loc <= (fdomain[1] + fdomain[0])/2.:
-            population[idx] = agaussian(stimulus, 
+            population[idx] = agaussian(stimulus,
                 loc=loc, bl=bs, br=b_min, sl=sc, sr=s_min)
         if loc > (fdomain[1] + fdomain[0])/2.:
             population[idx] = agaussian(stimulus,
@@ -379,7 +379,7 @@ def show_population_static(x, idx_x, idx_y, fdomain=DEFAULT_FDOMAIN, kind='carte
     ax=None, label=None, plot_kwargs={}, title=''):
     """ Docstring for show_population_static
     """
-    
+
     if kind == 'cartesian':
         subplot_kw = {'polar': False}
     elif kind == 'polar':
@@ -448,7 +448,7 @@ def show_population_animation_bars(X, idx_x=50, idx_y=50, interval=150,
         raise Exception('Coordinate lists idx_x and idx_y have different lengths')
     else:
         n_curves = len(idx_x)
-    
+
     n_timesteps = X.shape[0]
     n_neurons = X.shape[1]
     xs = sp.arange(n_neurons)
@@ -845,7 +845,7 @@ def animate_populations(X, idx,
             max_yt = X_curves[i_curve][i].max()
             min_yt = X_curves[i_curve][i].min()
             decoded_value_index = decode_index(X_curves[i_curve][i])
-            
+
             if curve_type == 'bar':
                 for j, b in enumerate(population_graphs[i_curve]):
                     b.set_height(X_curves[i_curve][i][j])
@@ -1055,7 +1055,7 @@ def data_postprocessing(x,y,extra_vars):
 
         return ind_magn_sx2.mean(1), ang_diff
     elif extra_vars['figure_name'] == 'f5':
-        dc = extra_vars['u2sec'](decode(y[:, extra_vars['mp0'],extra_vars['mp0'], :], 
+        dc = extra_vars['u2sec'](decode(y[:, extra_vars['mp0'],extra_vars['mp0'], :],
             kind=extra_vars['decoder'], axis=1)) #In his original work, david stored the history of y's and then only analyzed the final one. Here we are returning the final y so we don't have to worry about his additional indexing
         out_dc = dc / abs(extra_vars['flanker_disp'])
         return out_dc, dc
@@ -1079,9 +1079,9 @@ def data_postprocessing(x,y,extra_vars):
         ##############################
         # measure illusion as shift in the b* coordinate of CIE L*a*b*
         ##############################################################
-        # get ground-truth coordinates of test stim. in relevant color space  
+        # get ground-truth coordinates of test stim. in relevant color space
         default_rgb = extra_vars['_DEFAULT_SM2003_COLORS_RGB']
-        test_color = extra_vars['test_color'] 
+        test_color = extra_vars['test_color']
         gt_test_rgb = sp.array([c for c in default_rgb[test_color]])
         gt_test_XYZ = model_cutils.rgb2xyz(gt_test_rgb.reshape((1, 1, 3))).squeeze()
         gt_test_lab = model_cutils.xyz2lab(gt_test_XYZ.reshape((1, 1, 3))).squeeze()

@@ -13,9 +13,9 @@ class PaperDefaults(object):
         self._DEFAULT_MAXITER = 100 # safe value: 100
         self._DEFAULT_STEPSIZE = 3.0 # safe value: 1.0
         self._PARAMETER_SET_VERSION = 'paper'
-        self._DATADIR = '/home/drew/Documents/dmely_hmax/models/ucircuits/contextual/data' 
-        self._WORKDIR = '/home/drew/Documents/dmely_hmax/models/ucircuits/contextual/working'
-        self._FIGURES = '/home/drew/Documents/contextual_model/figures'
+        self._DATADIR = '/media/data_cifs/contextual_circuit/hmax_versions/mely_data'
+        self._WORKDIR = '/media/storage_30/nathan/contextual_model/working'
+        self._FIGURES = '/media/storage_30/nathan/contextual_model/figures_nate'
         if self._PARAMETER_SET_VERSION == 'paper':
             self._SRF = 1
             self._SSN = 9
@@ -34,7 +34,7 @@ class PaperDefaults(object):
 
         self.table_name = 'F_MANUSCRIPT_FINAL'  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
         #Figure specific items
-        self.f4_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f4.npz' 
+        self.f4_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f4.npz'
         self.f7_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f7.npy'
 
         ###

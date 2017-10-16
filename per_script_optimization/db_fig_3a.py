@@ -3,11 +3,12 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import numpy as np
 import scipy as sp
-from ops import stimuli as stim
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
+import ops.stimuli as stim
 from ops.model_utils import iround
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_db_hp_optim import optimize_model
-
 
 def run():
     defaults = PaperDefaults()
@@ -57,6 +58,7 @@ def run():
     extra_vars['kind'] = 'circular'
     extra_vars['figure_name'] = 'f3a'
     extra_vars['return_var'] = 'O'
+    import ipdb; ipdb.set_trace()
     optimize_model(im, ds_ow77_paper_y, extra_vars, defaults)
 
 if __name__ == '__main__':

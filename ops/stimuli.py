@@ -14,7 +14,7 @@ DEFAULT_CONCENTRIC_VALUES = sp.linspace(0.375, 0.625, 6)
 def normalize_stimulus_range(stimulus, native_range, target_range):
     """ Docstring for normalize_stimulus_range
     """
-    
+
     stimulus = (stimulus - native_range[0])/(native_range[1] - native_range[0])
     stimulus = stimulus * (target_range[1] - target_range[0]) + target_range[0]
 
@@ -83,7 +83,7 @@ def get_concentric(size=101, values=DEFAULT_CONCENTRIC_VALUES, annular_width=3,
     if normalize_range:
         stimulus = normalize_stimulus_range(stimulus,
             native_range=native_range, target_range=target_range)
-    
+
     return stimulus
 
 #------------------------------------------------------------------------------#
@@ -104,7 +104,7 @@ def westheimer(sz, h, w, valc, valc2, vals, sepc, seps):
     stim[a:b, c+2*w+sepc+seps:d+2*w+sepc+seps] = vals # right flanker
 
     return stim
-    
+
 #------------------------------------------------------------------------------#
 def westheimer_simple(sz, h, w, cval, sval, sep):
     """"""

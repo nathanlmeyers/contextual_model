@@ -3,10 +3,12 @@ import numpy as np
 import scipy as sp
 from skimage import img_as_float
 from skimage.color import xyz2rgb, rgb2xyz
+from sklearn import linear_model
+import sys
+sys.path.insert(0, '/media/data_cifs/contextual_circuit/hmax_versions/')
 from hmax.models.hnorm import models as mod
 from hmax.tools.utils import pb
 from hmax.models.ucircuits.contextual import stimuli as stim
-from sklearn import linear_model
 
 CIECAM02_CAT = sp.array([[ 0.7328,  0.4296, -0.1624],
                          [-0.7036,  1.6975,  0.0061],
@@ -154,7 +156,7 @@ def _show_color_matrices(A_im, B_im, row_leg, col_leg, cell_sz=9, lw=1):
     ax[1].grid('off')
     ax[1].set_xticklabels([])
     ax[1].set_yticklabels([])
-    
+
     return fig, ax
 
 def lms2dklC(lms_array):
@@ -198,7 +200,7 @@ def create_stims(extra_vars):
     test_sat_dklS = 0.2
     surr_sat_dklS = 0.16
     isolum_el = 0.0 # elevation is 0 to get isolumination to background
-    
+
     stims_all_lms = sp.zeros((extra_vars.n_train, extra_vars.size, extra_vars.size, 3))
     stims_ind_lms = sp.zeros((extra_vars.n_t_hues, extra_vars.n_s_hues, extra_vars.size, extra_vars.size, 3))
 
@@ -254,7 +256,7 @@ def create_stims(extra_vars):
             so_ind[idx, jdx] = GET_SO(stims_ind_lms[idx, jdx],extra_vars._DEFAULT_FLOATX_NP,extra_vars._DEFAULT_KW2015_SO_PARAMETERS)
             pbar.update(jdx + idx * extra_vars.n_s_hues)
     pbar.finish()
-    so_ind = so_ind.reshape(extra_vars.n_t_hues*extra_vars.n_s_hues, 
+    so_ind = so_ind.reshape(extra_vars.n_t_hues*extra_vars.n_s_hues,
         nc, extra_vars.size, extra_vars.size)
 
     #Final ops
