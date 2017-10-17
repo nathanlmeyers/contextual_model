@@ -32,7 +32,7 @@ class PaperDefaults(object):
             raise ValueError('Invalid value for _PARAMETER_SET_VERSION')
 
 
-        self.table_name = 'F_MANUSCRIPT_FINAL'  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
+        self.table_name = 'bayes_opt_test_table'  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
         #Figure specific items
         self.f4_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f4.npz'
         self.f7_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f7.npy'
@@ -60,10 +60,10 @@ class PaperDefaults(object):
         }
 
         self.hp_optim_type = 'random_exp'  #'none' 'uniform' 'random' random_exp and 'random_linear'
-        # self.lesions = ['None']  #['mely']
+        self.lesions = ['None']  #['mely']
         # self.lesions = ['tuning']  # ,'Q','U','P','T']  #['mely']
         # self.lesions = ['None', 'Q', 'U']  # , 'omega']
-        self.lesions = ['alpha_beta']  # , 'omega']
+        # self.lesions = ['alpha_beta']  # , 'omega']
         # self.lesions = ['None', 'P', 'T', 'mu_nu', 'alpha_beta', 'crf_ecrf_combo', 'final_ecrf_overlap']  # , 'omega']
         if 'omega' in self.lesions:
             self.optimize_omega = True
@@ -77,7 +77,7 @@ class PaperDefaults(object):
         self.overlap_eCRFs = False
         self.tune_max_scale = np.repeat(100, len(self.tunable_params)) #not used with random_log
         self.tune_step = np.repeat(0.01, len(self.tunable_params)) #not used with random_log
-        self.iterations = 1000
+        self.iterations = 1 #Nate edit
         self.db_schema = 'ops/db_schema.txt'
         self.db_problem_columns = ['f3a','f3b','f4','f5','f7','bw','tbtcso','tbp'] #['f6']#
         self.remove_figures = None  # leave to None if all

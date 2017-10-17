@@ -26,9 +26,13 @@ def close_db(cur,conn):
     cur.close()
     conn.close()
 
-def generate_combos():
+def generate_combos(init_combos=None):
     ofun = grab_sampler(defaults)
-    add_to_database(defaults,ofun)
+    #init_combos is argument to say how many hyperparameter combos we want to initialize
+    if init_combos is not None:
+        add_to_database(defaults,ofun,init_combos=init_combos)
+    else:
+        add_to_database(defaults,ofun,init_combos=0)
 
 def generate_omega_combos():
     ofun = grab_sampler(defaults)
@@ -55,12 +59,14 @@ def init_db():
     conn.commit()
     close_db(cur,conn)
 
-def add_to_database(parameters,ofun,table_name=defaults.table_name):
-
+def add_to_database(parameters,ofun,init_combos,table_name=defaults.table_name):
     #Connect to database
     conn,cur = open_db()
+    num_its = parameters.iterations
+    if init_combos > 0:
+        num_its = init_combos
     for l in parameters.lesions:
-        for idx in range(parameters.iterations):
+        for idx in range(num_its):
             random_parameters = ofun(parameters)._DEFAULT_PARAMETERS
             cur.execute("INSERT INTO " + table_name + " (lesions,alpha,beta,mu,nu,gamma,delta) VALUES (%s,%s,%s,%s,%s,%s,%s)",
                 (l,random_parameters['alpha'],random_parameters['beta'],
@@ -107,7 +113,7 @@ def get_row_from_db(fn,table_name=defaults.table_name):
     conn,cur = open_db(use_dict=True)
     cur.execute("SELECT * FROM %s WHERE %s IS NULL LIMIT 1" % (table_name, fn))
     row = dict(cur.fetchone())
-    return row 
+    return row
 
 def get_lesion_rows_from_db(lesion,fn,get_one=False,table_name=defaults.table_name):
     conn,cur = open_db(use_dict=True)

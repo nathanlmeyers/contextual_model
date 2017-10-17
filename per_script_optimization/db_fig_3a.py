@@ -58,7 +58,6 @@ def run():
     extra_vars['kind'] = 'circular'
     extra_vars['figure_name'] = 'f3a'
     extra_vars['return_var'] = 'O'
-    import ipdb; ipdb.set_trace()
     optimize_model(im, ds_ow77_paper_y, extra_vars, defaults)
 
 if __name__ == '__main__':

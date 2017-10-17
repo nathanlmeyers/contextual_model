@@ -6,9 +6,10 @@ from copy import deepcopy
 from timeit import default_timer as timer
 from model_defs.model_cpu_port_scan_optim import ContextualCircuit, _sgw, _sdw
 import scipy as sp
-from ops.db_utils import update_data, get_lesion_rows_from_db, count_sets
+from ops.db_utils import update_data, get_lesion_rows_from_db, count_sets, get_all_lesion_data
 from model_utils import iceil
 from ops.parameter_defaults import PaperDefaults
+import GPyOpt
 
 
 defaults = PaperDefaults().__dict__
@@ -19,7 +20,7 @@ def adjust_parameters(defaults,hps):
         if k in hps_keys:
             defaults._DEFAULT_PARAMETERS[k] = hps[k]
     return defaults
-    
+
 def printProgress(iteration, total, prefix = '', suffix = '', decimals = 1, bar_length = 100):
     str_format = "{0:." + str(decimals) + "f}"
     percents = str_format.format(100 * (iteration / float(total)))
@@ -34,7 +35,7 @@ def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
     start = timer()
     sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))  # depreciated
 
-    # tf.group(tf.global_variables_initializer()) 
+    # tf.group(tf.global_variables_initializer())
     feed_dict = {ctx.X:x,
     # ctx.xi:default_parameters._DEFAULT_PARAMETERS['xi'].reshape(-1,1),
     ctx.alpha:default_parameters._DEFAULT_PARAMETERS['alpha'].reshape(-1,1),
@@ -57,7 +58,7 @@ def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
     elif extra_vars['return_var'] == 'O':
         y = sess.run(ctx.out_O,feed_dict=feed_dict)
     end = timer()
-    run_time = end - start    
+    run_time = end - start
     return y,run_time
 
 def prepare_hps(parameters,hp_set):
@@ -97,7 +98,6 @@ def get_fits(y,gt,extra_vars):
     return it_score
 
 def optimize_model(im,gt,extra_vars,parameters):
-
     #Do outer loop of lesions -- embed in variable scopes
     for lesion in parameters.lesions:
         outer_parameters = deepcopy(parameters)
@@ -116,7 +116,6 @@ def optimize_model(im,gt,extra_vars,parameters):
             x = model_utils.get_population2(im,
                 npoints=extra_vars['npoints'], kind=extra_vars['kind'],
                  scale=extra_vars['scale']).astype(outer_parameters._DEFAULT_FLOATX_NP).transpose(0,2,3,1) #transpose to bhwc
-
         # Build main graph
         with tf.device('/gpu:0'):
             with tf.variable_scope('main_' + lesion):
@@ -135,7 +134,21 @@ def optimize_model(im,gt,extra_vars,parameters):
                     hp_set = get_lesion_rows_from_db(
                         lesion, extra_vars['figure_name'], get_one=True)
                     if hp_set is None and parameters.pachaya is not True:
-                        break
+                        import ipdb; ipdb.set_trace()
+                        dat = np.array(get_all_lesion_data(lesion,table_name=defaults['table_name']))
+                        hist = dat[:,2:8]
+                        perf = np.array([[x] for x in dat[:,8]])
+                        bds = [{'name': 'alpha', 'type': 'continuous', 'domain': (0,1)},
+                               {'name': 'beta', 'type': 'continuous', 'domain': (0,1)},
+                               {'name': 'mu', 'type': 'continuous', 'domain': (0,1)},
+                               {'name': 'nu', 'type': 'continuous', 'domain': (0,1)},
+                               {'name': 'gamma', 'type': 'continuous', 'domain': (0,1)},
+                               {'name': 'delta', 'type': 'continuous', 'domain': (0,1)}]
+                        opt_me = GPyOpt.methods.BayesianOptimization(f = None, X = hist, Y = perf, domain = bds, evaluator_type = 'local_penalization')
+                        next_samp = opt_me.suggested_sample[0].tolist()
+                        opt_list = ['alpha', 'beta', 'mu', 'nu', 'gamma', 'delta']
+                        hp_set = dict(zip(opt_list,next_samp))
+                        random_parameters = prepare_hps(outer_parameters, hp_set)
                     else:
                         if parameters.pachaya:
                             random_parameters = prepare_hps(
@@ -143,41 +156,40 @@ def optimize_model(im,gt,extra_vars,parameters):
                         else:
                             random_parameters = prepare_hps(
                                 outer_parameters, hp_set)
+                    # Special case for fig 4
+                    if extra_vars['figure_name'] == 'f4':
+                        extra_vars['aux_y'], _ = compute_shifts(
+                            x=extra_vars['aux_data'], sess=sess,
+                            ctx=aux_ctx, extra_vars=extra_vars,
+                            default_parameters=random_parameters)
+                    # Apply the model to the data
+                    oy, run_time = compute_shifts(
+                        x=x, sess=sess, ctx=ctx,
+                        extra_vars=extra_vars,
+                        default_parameters=random_parameters)
 
-                        # Special case for fig 4
-                        if extra_vars['figure_name'] == 'f4':
-                            extra_vars['aux_y'], _ = compute_shifts(
-                                x=extra_vars['aux_data'], sess=sess,
-                                ctx=aux_ctx, extra_vars=extra_vars,
-                                default_parameters=random_parameters)
-                        # Apply the model to the data
-                        oy, run_time = compute_shifts(
-                            x=x, sess=sess, ctx=ctx,
-                            extra_vars=extra_vars,
-                            default_parameters=random_parameters) 
+                    # Postprocess the model's outputs
+                    y, aux_data = model_utils.data_postprocessing(
+                        x, oy, extra_vars)  # maybe return a dict instead?
 
-                        # Postprocess the model's outputs
-                        y, aux_data = model_utils.data_postprocessing(
-                            x, oy, extra_vars)  # maybe return a dict instead?
+                    # Correlate simulation and ground truth
+                    it_score = get_fits(y, gt, extra_vars)
 
-                        # Correlate simulation and ground truth
-                        it_score = get_fits(y, gt, extra_vars)
-
-                        # Add to database
-                        if parameters.pachaya and idx == 1:
-                            break
-                        else:
-                            update_data(
-                                random_parameters, extra_vars['figure_name'],
-                                hp_set['_id'], it_score)
-                        printProgress(
-                            idx, num_sets,
-                            prefix=extra_vars['figure_name'] +
-                            ' progress on lesion ' + lesion + ':',
-                            suffix='Iteration time: ' +
-                            str(np.around(run_time, 2)) +
-                            '; Correlation: ' + str(np.around(it_score, 2)),
-                            bar_length=30)
+                    # Add to database
+                    if parameters.pachaya and idx == 1:
+                        break
+                    else:
+                        update_data(
+                            random_parameters, extra_vars['figure_name'],
+                            hp_set['_id'], it_score)
+                    printProgress(
+                        idx, num_sets,
+                        prefix=extra_vars['figure_name'] +
+                        ' progress on lesion ' + lesion + ':',
+                        suffix='Iteration time: ' +
+                        str(np.around(run_time, 2)) +
+                        '; Correlation: ' + str(np.around(it_score, 2)),
+                        bar_length=30)
                     if parameters.gaussian_spatial or parameters.gaussian_channel:
                         break
                     else:
