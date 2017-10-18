@@ -77,6 +77,13 @@ def add_to_database(parameters,ofun,init_combos,table_name=defaults.table_name):
     conn.commit()
     close_db(cur,conn)
 
+def add_row_to_db(parameters,p_list,table_name=defaults.table_name):
+    conn,cur = open_db()
+    cur.execute("INSERT INTO " + table_name + " (_id,lesions,alpha,beta,mu,nu,gamma,delta) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+        (parameters['_id'],'None',parameters['alpha'],parameters['beta'],
+            parameters['mu'],parameters['nu'],
+            parameters['gamma'],parameters['delta']))
+
 def add_omegas_to_database(parameters,ofun,table_name=defaults.table_name):
     best_fits = np.load(os.path.join(
             defaults._FIGURES, 'best_hps.npz'))['max_row']

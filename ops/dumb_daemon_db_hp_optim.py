@@ -6,7 +6,7 @@ from copy import deepcopy
 from timeit import default_timer as timer
 from model_defs.model_cpu_port_scan_optim import ContextualCircuit, _sgw, _sdw
 import scipy as sp
-from ops.db_utils import update_data, get_lesion_rows_from_db, count_sets, get_all_lesion_data
+from ops.db_utils import update_data, get_lesion_rows_from_db, count_sets, get_all_lesion_data, add_row_to_db
 from model_utils import iceil
 from ops.parameter_defaults import PaperDefaults
 import GPyOpt
@@ -56,6 +56,7 @@ def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
     if extra_vars['return_var'] == 'I':
         y = sess.run(ctx.out_I,feed_dict=feed_dict)
     elif extra_vars['return_var'] == 'O':
+        import ipdb; ipdb.set_trace()
         y = sess.run(ctx.out_O,feed_dict=feed_dict)
     end = timer()
     run_time = end - start
@@ -130,11 +131,10 @@ def optimize_model(im,gt,extra_vars,parameters):
             with tf.Session(
                     config=tf.ConfigProto(
                         allow_soft_placement=True)) as sess:
-                while 1:  # while we have hp to run on this lesion
+                while idx < 4:  # while we have hp to run on this lesion
                     hp_set = get_lesion_rows_from_db(
                         lesion, extra_vars['figure_name'], get_one=True)
                     if hp_set is None and parameters.pachaya is not True:
-                        import ipdb; ipdb.set_trace()
                         dat = np.array(get_all_lesion_data(lesion,table_name=defaults['table_name']))
                         hist = dat[:,2:8]
                         perf = np.array([[x] for x in dat[:,8]])
@@ -149,6 +149,8 @@ def optimize_model(im,gt,extra_vars,parameters):
                         opt_list = ['alpha', 'beta', 'mu', 'nu', 'gamma', 'delta']
                         hp_set = dict(zip(opt_list,next_samp))
                         random_parameters = prepare_hps(outer_parameters, hp_set)
+                        hp_set['_id'] = max(dat[:,0])+1
+                        add_row_to_db(hp_set,opt_list)
                     else:
                         if parameters.pachaya:
                             random_parameters = prepare_hps(
