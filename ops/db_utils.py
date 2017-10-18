@@ -83,6 +83,8 @@ def add_row_to_db(parameters,p_list,table_name=defaults.table_name):
         (parameters['_id'],'None',parameters['alpha'],parameters['beta'],
             parameters['mu'],parameters['nu'],
             parameters['gamma'],parameters['delta']))
+    conn.commit()
+    close_db(cur,conn)
 
 def add_omegas_to_database(parameters,ofun,table_name=defaults.table_name):
     best_fits = np.load(os.path.join(

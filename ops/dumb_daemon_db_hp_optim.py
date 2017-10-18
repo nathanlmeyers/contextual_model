@@ -11,7 +11,7 @@ from model_utils import iceil
 from ops.parameter_defaults import PaperDefaults
 import GPyOpt
 
-
+max_its = int(sys.argv[1])
 defaults = PaperDefaults().__dict__
 
 def adjust_parameters(defaults,hps):
@@ -56,7 +56,6 @@ def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
     if extra_vars['return_var'] == 'I':
         y = sess.run(ctx.out_I,feed_dict=feed_dict)
     elif extra_vars['return_var'] == 'O':
-        import ipdb; ipdb.set_trace()
         y = sess.run(ctx.out_O,feed_dict=feed_dict)
     end = timer()
     run_time = end - start
@@ -125,19 +124,20 @@ def optimize_model(im,gt,extra_vars,parameters):
 
         # Do hp optimization
         num_sets = count_sets(lesion, extra_vars['figure_name'])[0]['count']
+
         if num_sets > 0:
             idx = 0  # keep a count
             # Initialize the session
             with tf.Session(
                     config=tf.ConfigProto(
                         allow_soft_placement=True)) as sess:
-                while idx < 4:  # while we have hp to run on this lesion
+                while idx < max_its:  # while we have hp to run on this lesion
                     hp_set = get_lesion_rows_from_db(
                         lesion, extra_vars['figure_name'], get_one=True)
                     if hp_set is None and parameters.pachaya is not True:
                         dat = np.array(get_all_lesion_data(lesion,table_name=defaults['table_name']))
                         hist = dat[:,2:8]
-                        perf = np.array([[x] for x in dat[:,8]])
+                        perf = -np.array([[perf_it] for perf_it in dat[:,8]])
                         bds = [{'name': 'alpha', 'type': 'continuous', 'domain': (0,1)},
                                {'name': 'beta', 'type': 'continuous', 'domain': (0,1)},
                                {'name': 'mu', 'type': 'continuous', 'domain': (0,1)},
@@ -185,7 +185,7 @@ def optimize_model(im,gt,extra_vars,parameters):
                             random_parameters, extra_vars['figure_name'],
                             hp_set['_id'], it_score)
                     printProgress(
-                        idx, num_sets,
+                        idx, max_its,
                         prefix=extra_vars['figure_name'] +
                         ' progress on lesion ' + lesion + ':',
                         suffix='Iteration time: ' +
