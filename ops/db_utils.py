@@ -133,6 +133,12 @@ def get_lesion_rows_from_db(lesion,fn,get_one=False,table_name=defaults.table_na
         data = cur.fetchall()
     return data
 
+def plot_db(table_name=defaults.table_name):
+    conn,cur = open_db(use_dict=True)
+    cur.execute("SELECT * FROM " + table_name)
+    hist = cur.fetchall()
+    return hist
+
 def count_sets(lesion,fn,table_name=defaults.table_name):
     conn,cur = open_db(use_dict=True)
     cur.execute("SELECT count(*) FROM %s WHERE lesions='%s' and %s IS NULL" % (table_name,lesion,fn))

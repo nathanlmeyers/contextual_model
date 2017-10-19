@@ -32,7 +32,7 @@ def printProgress(iteration, total, prefix = '', suffix = '', decimals = 1, bar_
     sys.stdout.flush()
 
 def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
-    start = timer()
+    #start = timer()
     sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))  # depreciated
 
     # tf.group(tf.global_variables_initializer())
@@ -57,7 +57,7 @@ def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
         y = sess.run(ctx.out_I,feed_dict=feed_dict)
     elif extra_vars['return_var'] == 'O':
         y = sess.run(ctx.out_O,feed_dict=feed_dict)
-    end = timer()
+    #end = timer()
     run_time = end - start
     return y,run_time
 
@@ -132,6 +132,7 @@ def optimize_model(im,gt,extra_vars,parameters):
                     config=tf.ConfigProto(
                         allow_soft_placement=True)) as sess:
                 while idx < max_its:  # while we have hp to run on this lesion
+                    start = timer()
                     hp_set = get_lesion_rows_from_db(
                         lesion, extra_vars['figure_name'], get_one=True)
                     if hp_set is None and parameters.pachaya is not True:
@@ -184,13 +185,14 @@ def optimize_model(im,gt,extra_vars,parameters):
                         update_data(
                             random_parameters, extra_vars['figure_name'],
                             hp_set['_id'], it_score)
+                    end = timer()
                     printProgress(
                         idx, max_its,
                         prefix=extra_vars['figure_name'] +
                         ' progress on lesion ' + lesion + ':',
                         suffix='Iteration time: ' +
-                        str(np.around(run_time, 2)) +
-                        '; Correlation: ' + str(np.around(it_score, 2)),
+                        str(np.around(end-start, 2)) +
+                        '; Correlation: ' + str(np.around(it_score, 5)),
                         bar_length=30)
                     if parameters.gaussian_spatial or parameters.gaussian_channel:
                         break
