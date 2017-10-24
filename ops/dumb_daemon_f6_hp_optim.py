@@ -91,7 +91,7 @@ def compute_shifts(x, ctx, extra_vars, default_parameters):
         elif extra_vars['return_var'] == 'O':
             y = sess.run(ctx.out_O,feed_dict=feed_dict)
         end = timer()
-        run_time = end - start    
+        run_time = end - start
     return y,run_time
 
 def compute_shifts_loop(x, ctx, extra_vars, default_parameters):
@@ -181,8 +181,8 @@ def optimize_model(gt,extra_vars,parameters):
                     dec_dir_vote = sp.zeros((extra_vars['ncoh'], extra_vars['ntrials']))
                     dec_variance = sp.zeros((extra_vars['ncoh'], extra_vars['ntrials']))
                     for il in range(extra_vars['ntrials']):
-                        oy, run_time = compute_shifts(x=x, ctx=ctx, 
-                            extra_vars=extra_vars, default_parameters=random_parameters) 
+                        oy, run_time = compute_shifts(x=x, ctx=ctx,
+                            extra_vars=extra_vars, default_parameters=random_parameters)
                         dec_dir_vote[:,il], dec_variance[:,il]= model_utils.data_postprocessing(x,oy,extra_vars) #maybe return a dict instead?
 
                     PSE_vote = sp.zeros((nw,))
@@ -196,12 +196,13 @@ def optimize_model(gt,extra_vars,parameters):
                     PSE_variance[ol] = coherences4fit[dec_variance_fit[ol].argmax()]
                 PSE_mixed = (PSE_vote + PSE_variance) / 2.0
                 y = PSE_mixed * 100 #this is unnecessary for correlation, but let's keep for plotting purposes
+                import ipdb; ipdb.set_trace()
                 it_score = np.corrcoef(y,gt)[0,1]# ** 2
 
                 #Add to database
                 update_data(random_parameters,extra_vars['figure_name'],hp_set['_id'],it_score)
-                printProgress(idx, num_sets, 
-                    prefix = extra_vars['figure_name'] + ' progress on lesion ' + lesion + ':', 
-                    suffix = 'Iteration time: ' + str(np.around(run_time,2)) + '; Correlation: ' + str(np.around(it_score,2)), 
+                printProgress(idx, num_sets,
+                    prefix = extra_vars['figure_name'] + ' progress on lesion ' + lesion + ':',
+                    suffix = 'Iteration time: ' + str(np.around(run_time,2)) + '; Correlation: ' + str(np.around(it_score,2)),
                     bar_length = 30)
                 idx+=1

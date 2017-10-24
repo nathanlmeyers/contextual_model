@@ -3,6 +3,8 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import numpy as np
 import scipy as sp
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_db_hp_optim import optimize_model
 from ops.fig_4_utils import *
@@ -68,7 +70,7 @@ def run(initialize_model=False):
     adj_gt = np.mean(kw2015_fig2_y,axis=0)
     im = stim_files['so_ind'].reshape(
         n_t_hues*n_s_hues,len(_DEFAULT_KW2015_SO_PARAMETERS['norm_channels']),size,size)
-    extra_vars['aux_data'] = stim_files['so_all'].transpose(0,2,3,1) 
+    extra_vars['aux_data'] = stim_files['so_all'].transpose(0,2,3,1)
     extra_vars['cs_hue_diff'] = stim_files['cs_hue_diff']
 
     optimize_model(im,adj_gt,extra_vars,defaults)

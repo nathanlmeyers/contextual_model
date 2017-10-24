@@ -13,6 +13,7 @@ import GPyOpt
 
 max_its = int(sys.argv[1])
 defaults = PaperDefaults().__dict__
+to_opt = int(sys.argv[2])
 
 def adjust_parameters(defaults,hps):
     hps_keys = hps.keys()
@@ -33,6 +34,7 @@ def printProgress(iteration, total, prefix = '', suffix = '', decimals = 1, bar_
 
 def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
     #start = timer()
+    import ipdb; ipdb.set_trace()
     sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))  # depreciated
 
     # tf.group(tf.global_variables_initializer())
@@ -58,8 +60,8 @@ def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
     elif extra_vars['return_var'] == 'O':
         y = sess.run(ctx.out_O,feed_dict=feed_dict)
     #end = timer()
-    run_time = end - start
-    return y,run_time
+    #run_time = end - start
+    return y#,run_time
 
 def prepare_hps(parameters,hp_set):
     new_parameters = deepcopy(parameters)
@@ -135,7 +137,7 @@ def optimize_model(im,gt,extra_vars,parameters):
                     start = timer()
                     hp_set = get_lesion_rows_from_db(
                         lesion, extra_vars['figure_name'], get_one=True)
-                    if hp_set is None and parameters.pachaya is not True:
+                    if hp_set is None and parameters.pachaya is not True and to_opt > 0:
                         dat = np.array(get_all_lesion_data(lesion,table_name=defaults['table_name']))
                         hist = dat[:,2:8]
                         perf = -np.array([[perf_it] for perf_it in dat[:,8]])
@@ -166,7 +168,7 @@ def optimize_model(im,gt,extra_vars,parameters):
                             ctx=aux_ctx, extra_vars=extra_vars,
                             default_parameters=random_parameters)
                     # Apply the model to the data
-                    oy, run_time = compute_shifts(
+                    oy = compute_shifts(
                         x=x, sess=sess, ctx=ctx,
                         extra_vars=extra_vars,
                         default_parameters=random_parameters)

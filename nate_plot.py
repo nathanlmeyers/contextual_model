@@ -1,22 +1,27 @@
 from ops.db_utils import plot_db
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
-import pylab as plt
+# import matplotlib
+# matplotlib.use('Agg')
+# import pylab as plt
+import matplotlib.pyplot as plt
 
+import ipdb; ipdb.set_trace()
 swag = plot_db()
 swag_df = pd.DataFrame(np.array(swag))
-perf = swag_df[[8]]
-# plt.plot(perf)
-# plt.xlabel("Iteration")
-# plt.ylabel("Correlation")
-# plt.show()
+perf_f3a = swag_df[[8]]
+perf_f3b = swag_df[[9]]
+perf_f5 = swag_df[[11]]
+plt.plot(perf_f3a)
+plt.plot(perf_f3b)
+plt.plot(perf_f5)
+plt.xlabel("Iteration")
+plt.ylabel("Correlation")
+plt.show()
 # plt.clf()
-swag_df[[2,3,4,5,6,7]].plot()
-plt.ylim((0,1))
-plt.savefig('vars.png')
-
+# swag_df[[2,3,4,5,6,7]].plot()
+# plt.ylim((0,1))
+# plt.savefig('vars.png')
 
 # run_best_perf = sum(perf.values.tolist(), [])
 # imps = [0] * len(run_best_perf)

@@ -3,6 +3,8 @@ import os,joblib
 os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import numpy as np
 import scipy as sp
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
 from ops.model_utils import iround
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_f7_hp_optim import optimize_model, create_stimuli
@@ -29,7 +31,7 @@ def run(make_stims=False):
 
     #Use color parameters
     defaults._DEFAULT_PARAMETERS['continuous'] = False
-    defaults._DEFAULT_PARAMETERS['srf'] = _DEFAULT_SM2003_CSIZE 
+    defaults._DEFAULT_PARAMETERS['srf'] = _DEFAULT_SM2003_CSIZE
 
     csvfiles={
     'ObsML': {
@@ -84,7 +86,7 @@ def run(make_stims=False):
     reg_Y_SX = joblib.load(regpath)['reg_Y_SX']
     reg_Z_SX = joblib.load(regpath)['reg_Z_SX']
     scaler_SX = joblib.load(regpath)['scaler_SX']
-    
+
     so2image = cutils.get_XYZ2RGB_predictor(reg_X_SO, reg_Y_SO, reg_Z_SO, scaler_SO)
     sx2image = cutils.get_XYZ2RGB_predictor(reg_X_SX, reg_Y_SX, reg_Z_SX, scaler_SX)
 

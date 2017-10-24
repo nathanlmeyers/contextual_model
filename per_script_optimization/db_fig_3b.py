@@ -1,10 +1,13 @@
+#!/usr/bin/python
 from __future__ import absolute_import
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import numpy as np
 import scipy as sp
-from scipy import signal 
-from ops import stimuli as stim
+from scipy import signal
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
+import ops.stimuli as stim
 from ops.model_utils import iround
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_db_hp_optim import optimize_model

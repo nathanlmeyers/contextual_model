@@ -4,6 +4,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import scipy as sp
 import numpy as np
 from scipy import signal
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
 from ops.model_utils import iround
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_db_hp_optim import optimize_model
@@ -35,7 +37,7 @@ def run():
     flanker_disp = -33.3
     mp0 = size//2
 
-    # Need to scale up the ecrfs 
+    # Need to scale up the ecrfs
     defaults._DEFAULT_PARAMETERS['srf'] = defaults._DEFAULT_PARAMETERS['srf'] * 2 - 1
     defaults._DEFAULT_PARAMETERS['ssn'] = defaults._DEFAULT_PARAMETERS['ssn'] * 2 - 1
     defaults._DEFAULT_PARAMETERS['ssf'] = defaults._DEFAULT_PARAMETERS['ssf'] * 2 - 1

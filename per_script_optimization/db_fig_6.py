@@ -4,6 +4,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import numpy as np
 import scipy as sp
 from scipy import signal
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_f6_hp_optim import optimize_model
 
@@ -55,7 +57,7 @@ def run():
     gt = np.mean(gt_data,axis=0)
     #
     extra_vars = {}
-    extra_vars['ws'] = _DEFAULT_MURAKAMISHIMOJO96_WS 
+    extra_vars['ws'] = _DEFAULT_MURAKAMISHIMOJO96_WS
     extra_vars['rdd'] = _DEFAULT_MURAKAMISHIMOJO96_RDD
     extra_vars['size'] = _DEFAULT_MURAKAMISHIMOJO96_SIZE
     extra_vars['ntrials'] = _DEFAULT_MURAKAMISHIMOJO96_NTRIALS
