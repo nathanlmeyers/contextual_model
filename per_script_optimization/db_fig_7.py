@@ -10,7 +10,6 @@ from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_f7_hp_optim import optimize_model, create_stimuli
 import ops.model_cutils as cutils
 
-
 def run(make_stims=False):
     defaults = PaperDefaults()
 
@@ -77,6 +76,7 @@ def run(make_stims=False):
         'ShevellMonnier2003.reg.pkl.std.srf%issn%issf%i' \
             % (defaults._DEFAULT_PARAMETERS['srf'], defaults._DEFAULT_PARAMETERS['ssn'], defaults._DEFAULT_PARAMETERS['ssf']))
 
+    import ipdb; ipdb.set_trace()
     reg_X_SO = joblib.load(regpath)['reg_X_SO']
     reg_Y_SO = joblib.load(regpath)['reg_Y_SO']
     reg_Z_SO = joblib.load(regpath)['reg_Z_SO']

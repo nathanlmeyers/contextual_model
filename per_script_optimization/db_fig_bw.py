@@ -1,7 +1,10 @@
+#!/usr/bin/python
 from __future__ import absolute_import
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import scipy as sp
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
 from ops import stimuli as stim
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_db_hp_optim import optimize_model
@@ -54,7 +57,7 @@ def run(hps=None):
     for r in range(y_paper.shape[0]):
         for c in range(y_paper.shape[1]):
             res_y_paper[r,c,:] = sp.signal.resample(y_paper[r,c,:],npoints)
-    gt = [t_paper,res_y_paper]            
+    gt = [t_paper,res_y_paper]
 
     extra_vars = {}
     extra_vars['scale'] = scale

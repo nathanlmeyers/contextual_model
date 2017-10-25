@@ -2,11 +2,13 @@ from __future__ import absolute_import
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import scipy as sp
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
 from ops import stimuli as stim
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_db_hp_optim import optimize_model
 from ops import model_utils
-from ops.fig_tpbtcso_utils import _plot_TrottBorn2015_tcso_data as get_gt
+from ops.fig_tbtcso_utils import _plot_TrottBorn2015_tcso_data as get_gt
 
 
 def run():

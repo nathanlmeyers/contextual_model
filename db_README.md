@@ -25,3 +25,4 @@
 #0. Run script by
 	a. make sure db_schema.txt and parameter_defaults.py agree, create new relation in db for experiment
 	b. sudo CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3a.py
+	c. you can replace 3a with 3b and 5 currently

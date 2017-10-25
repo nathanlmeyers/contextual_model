@@ -34,7 +34,6 @@ def printProgress(iteration, total, prefix = '', suffix = '', decimals = 1, bar_
 
 def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
     #start = timer()
-    import ipdb; ipdb.set_trace()
     sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))  # depreciated
 
     # tf.group(tf.global_variables_initializer())
@@ -163,7 +162,7 @@ def optimize_model(im,gt,extra_vars,parameters):
                                 outer_parameters, hp_set)
                     # Special case for fig 4
                     if extra_vars['figure_name'] == 'f4':
-                        extra_vars['aux_y'], _ = compute_shifts(
+                        extra_vars['aux_y'] = compute_shifts(
                             x=extra_vars['aux_data'], sess=sess,
                             ctx=aux_ctx, extra_vars=extra_vars,
                             default_parameters=random_parameters)

@@ -2,6 +2,8 @@ from __future__ import absolute_import
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 import scipy as sp
+import sys
+sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
 from ops import stimuli as stim
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_db_hp_optim import optimize_model
@@ -36,7 +38,7 @@ def run():
         size=size, csize=csize, cval=cval, sval=sp.nan)
     x1 = model_utils.get_population(imc1, **ppop)
     x = sp.zeros((2, len(vals), npoints, size, size))
-    
+
     for vdx, v in enumerate(vals):
         imc2 = stim.get_center_surround(
             size=size, csize=csize, cval=v, sval=sp.nan)
