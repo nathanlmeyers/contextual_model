@@ -1087,7 +1087,7 @@ def data_postprocessing(x,y,extra_vars):
         gt_test_lab = model_cutils.xyz2lab(gt_test_XYZ.reshape((1, 1, 3))).squeeze()
 
         # get decoded XYZ and L*a*b* coordinates
-        #import ipdb;ipdb.set_trace()
+        import ipdb;ipdb.set_trace()
         sx_test_lab = extra_vars['sx2image'](y.transpose(0,3,1,2), out='lab')[:, extra_vars['size']//2, extra_vars['size']//2, :]
 
         # shifts in various color spaces
