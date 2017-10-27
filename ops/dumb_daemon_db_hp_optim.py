@@ -134,18 +134,18 @@ def optimize_model(im,gt,extra_vars,parameters):
                         allow_soft_placement=True)) as sess:
                 while idx < max_its:  # while we have hp to run on this lesion
                     start = timer()
-                    hp_set = get_lesion_rows_from_db(
-                        lesion, extra_vars['figure_name'], get_one=True)
+                    hp_set = get_lesion_rows_from_db(lesion, extra_vars['figure_name'], get_one=True)
                     if hp_set is None and parameters.pachaya is not True and to_opt > 0:
                         dat = np.array(get_all_lesion_data(lesion,table_name=defaults['table_name']))
                         hist = dat[:,2:8]
                         perf = -np.array([[perf_it] for perf_it in dat[:,8]])
-                        bds = [{'name': 'alpha', 'type': 'continuous', 'domain': (0,1)},
-                               {'name': 'beta', 'type': 'continuous', 'domain': (0,1)},
-                               {'name': 'mu', 'type': 'continuous', 'domain': (0,1)},
-                               {'name': 'nu', 'type': 'continuous', 'domain': (0,1)},
-                               {'name': 'gamma', 'type': 'continuous', 'domain': (0,1)},
-                               {'name': 'delta', 'type': 'continuous', 'domain': (0,1)}]
+                        bds = defaults['_DEFAULT_DOMAINS']
+                        # bds = [{'name': 'alpha', 'type': 'continuous', 'domain': (0,1)},
+                        #        {'name': 'beta', 'type': 'continuous', 'domain': (0,1)},
+                        #        {'name': 'mu', 'type': 'continuous', 'domain': (0,1)},
+                        #        {'name': 'nu', 'type': 'continuous', 'domain': (0,1)},
+                        #        {'name': 'gamma', 'type': 'continuous', 'domain': (0,1)},
+                        #        {'name': 'delta', 'type': 'continuous', 'domain': (0,1)}]
                         opt_me = GPyOpt.methods.BayesianOptimization(f = None, X = hist, Y = perf, domain = bds, evaluator_type = 'local_penalization')
                         next_samp = opt_me.suggested_sample[0].tolist()
                         opt_list = ['alpha', 'beta', 'mu', 'nu', 'gamma', 'delta']

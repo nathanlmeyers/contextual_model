@@ -32,7 +32,7 @@ class PaperDefaults(object):
             raise ValueError('Invalid value for _PARAMETER_SET_VERSION')
 
 
-        self.table_name = 'bayes_opt_test_table'  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
+        self.table_name = 'bayes_opt_all'  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
         #Figure specific items
         self.f4_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f4.npz'
         self.f7_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f7.npy'
@@ -58,6 +58,12 @@ class PaperDefaults(object):
             'continuous':   True,        # feature space is continuously parametrized?
             'strides': [1, 1, 1, 1]
         }
+        self._DEFAULT_DOMAINS = [{'name': 'alpha', 'type': 'continuous', 'domain': (0,4)},
+                                 {'name': 'beta', 'type': 'continuous', 'domain': (0,7)},
+                                 {'name': 'mu', 'type': 'continuous', 'domain': (0,4)},
+                                 {'name': 'nu', 'type': 'continuous', 'domain': (0,2)},
+                                 {'name': 'gamma', 'type': 'continuous', 'domain': (0,4)},
+                                 {'name': 'delta', 'type': 'continuous', 'domain': (0,4)}]
 
         self.hp_optim_type = 'random_exp'  #'none' 'uniform' 'random' random_exp and 'random_linear'
         self.lesions = ['None']  #['mely']

@@ -48,8 +48,10 @@ def prepare_settings(fig_names):
     conn.commit()
     close_db(cur,conn)
 
-def init_db():
+def init_db(drop):
     conn,cur = open_db()
+    if drop == 'drop':
+        cur.execute("DROP TABLE " + defaults.table_name)
     db_schema = open(defaults.db_schema).read().splitlines()
     for s in db_schema:
         t = s.strip()
@@ -108,6 +110,20 @@ def gather_data(lesion,table_name=defaults.table_name):
     conn,cur = open_db(use_dict=True)
     cur.execute("SELECT (alpha,beta,mu,nu,gamma,delta,_id) FROM %s WHERE lesions='%s'" % (table_name, lesion))
     output = cur.fetchone()
+    close_db(cur,conn)
+    return output
+
+def gather_parameter_data(lesion,table_name=defaults.table_name):
+    conn,cur = open_db(use_dict=True)
+    cur.execute("SELECT alpha,beta,mu,nu,gamma,delta FROM %s WHERE lesions='%s'" % (table_name, lesion))
+    output = cur.fetchall()
+    close_db(cur,conn)
+    return output
+
+def gather_perf_data(lesion,table_name=defaults.table_name):
+    conn,cur = open_db(use_dict=True)
+    cur.execute("SELECT f3a,f3b FROM %s WHERE lesions='%s'" % (table_name, lesion))
+    output = cur.fetchall()
     close_db(cur,conn)
     return output
 
