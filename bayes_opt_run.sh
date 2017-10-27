@@ -1,8 +1,22 @@
-#!/bin/sh
-
-sudo python start_bayes_optim.py 5 drop
-sudo CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3a.py 5 0
-sudo CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3b.py 5 0
-sudo python ops/generate_and_insert_next_combo.py
-sudo CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3a.py 1 0
-sudo CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3b.py 1 0
+#!/usr/bin/env bash
+python start_bayes_optim.py 10 drop
+CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3a.py 10 0
+CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3b.py 10 0
+CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_4.py 10 0
+CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_5.py 10 0
+CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_tbp.py 10 0
+CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_tbtcso.py 10 0
+CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_bw.py 10 0
+for value in {1..1000}
+do
+  echo $value
+  python start_bayes_optim2.py 1 drop
+  CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3a.py 1 0
+  CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3b.py 1 0
+  CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_4.py 1 0
+  CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_5.py 1 0
+  CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_tbp.py 1 0
+  CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_tbtcso.py 1 0
+  CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_bw.py 1 0
+done
+echo finished

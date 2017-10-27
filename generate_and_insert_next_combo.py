@@ -1,8 +1,5 @@
 import sys
 import numpy as np
-import tensorflow as tf
-import model_utils
-from timeit import default_timer as timer
 import scipy as sp
 sys.path.insert(0, '/media/storage_30/nathan/contextual_model/')
 from ops.parameter_defaults import PaperDefaults
