@@ -4,14 +4,20 @@ import pandas as pd
 # import matplotlib
 # import pylab as plt
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Agg') #comment/uncomment if running remotely
 import matplotlib.pyplot as plt
-import ipdb; ipdb.set_trace()
 
+# Get the data from the db
 swag = plot_db('bayes_opt_all')
 swag_df = pd.DataFrame(np.array(swag))
 means = swag_df.loc[:,8:15].drop(12,axis = 1).mean(axis=1)
 means = means.drop(647)
+
+# Get the data from the manuscript
+manu = pd.DataFrame(np.genfromtxt('manu_data.csv',delimiter=","))
+manu_means = manu.loc[:,8:15].drop(12,axis = 1).mean(axis=1)
+
+### Uncomment for individual figure performance plots
 # perf_f3a = swag_df[[8]]
 # perf_f3b = swag_df[[9]]
 # perf_f4 = swag_df[[10]]
@@ -34,12 +40,12 @@ means = means.drop(647)
 #
 # plt.clf()
 
-manu = pd.DataFrame(np.genfromtxt('manu_data.csv',delimiter=","))
-manu_means = manu.loc[:,8:15].drop(12,axis = 1).mean(axis=1)
+### This plots
+plt_len = max(len(manu_means),len(means))
 plt.plot(manu_means, 'ro', markersize = 0.3)
 plt.plot(means[:-1], 'ko', markersize = 0.5)
-plt.plot((0,5000), (np.max(manu_means), np.max(manu_means)), 'r-')
-plt.plot((0,5000), (np.max(means[:-1]), np.max(means[:-1])), 'k-')
+plt.plot((0,plt_len), (np.max(manu_means), np.max(manu_means)), 'r-')
+plt.plot((0,plt_len), (np.max(means[:-1]), np.max(means[:-1])), 'k-')
 plt.xlabel("Iteration")
 plt.ylabel("Average Correlation")
 plt.ylim((0.5,0.02+np.min([np.max([np.max(manu_means),np.max(means[:-1])])])))

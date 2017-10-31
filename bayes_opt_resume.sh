@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-for value in {1..1000}
+for value in {1..100}
 do
   echo $value
   python start_bayes_optim3.py 1 gpyopt max

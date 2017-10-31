@@ -23,6 +23,17 @@
 ##### Nates Notes
 
 #0. Run script by
-	a. make sure db_schema.txt and parameter_defaults.py agree, create new relation in db for experiment
-	b. sudo CUDA_VISIBLE_DEVICES=0 python per_script_optimization/db_fig_3a.py
-	c. you can replace 3a with 3b and 5 currently
+	a. make sure db_schema.txt and parameter_defaults.py agree (for the table name)
+	b. bash bayes_opt_run.sh initalizes the db specified above (still doesn't work for f7 yet)
+	c. bash bayes_opt_resume.sh will resume a run, though you should double check the db first and reorder the scripts to make sure it runs okay
+	d. if the bash scripts do not run, try the following for the code:
+	awk '{ sub("\r$", ""); print }' bayes_opt_resume.sh > bayes_opt_resume2.sh
+	mv bayes_opt_resume2.sh bayes_opt_resume.sh
+	for example
+	e. use the above command to look at results in db. if you just want to get the status of a certain table, just run:
+	python status.py bayes_opt_all
+	f. if you want to plot the results (vs. baseline random search for now):
+	python plot_vs_random.py
+	g. note for nate: can kill process in another terminal using
+	ps -ef | grep <name_of_the_script>
+	kill -9 <pid_of_your_running_script>
