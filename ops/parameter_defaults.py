@@ -32,7 +32,7 @@ class PaperDefaults(object):
             raise ValueError('Invalid value for _PARAMETER_SET_VERSION')
 
 
-        self.table_name = 'bayes_opt_all'  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
+        self.table_name = 'bayes_opt_min_exp'  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
         #Figure specific items
         self.f4_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f4.npz'
         self.f7_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f7.npy'
