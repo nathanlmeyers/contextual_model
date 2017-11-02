@@ -1,7 +1,7 @@
 import numpy as np
+import sys
 import tensorflow as tf
 from collections import namedtuple
-
 
 class PaperDefaults(object):
     """ Returns a simulator for the Mely-Serre circuit that runs on CUDA. """
@@ -31,8 +31,7 @@ class PaperDefaults(object):
         else:
             raise ValueError('Invalid value for _PARAMETER_SET_VERSION')
 
-
-        self.table_name = 'bayes_opt_min_exp'  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
+        self.table_name = sys.argv[1]  # 'F_MANUSCRIPT_FINAL'  # 'final_full_hpcombos'
         #Figure specific items
         self.f4_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f4.npz'
         self.f7_stimuli_file = '/home/drew/Documents/tf_experiments/experiments/contextual_circuit/ops/special_figure_data/f7.npy'

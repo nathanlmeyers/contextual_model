@@ -1,5 +1,6 @@
 import psycopg2
 import os
+import sys
 import numpy as np
 import psycopg2.extras
 from ops.parameter_defaults import PaperDefaults
@@ -48,10 +49,13 @@ def prepare_settings(fig_names):
     conn.commit()
     close_db(cur,conn)
 
-def init_db(drop):
+def init_db(name):
     conn,cur = open_db()
     cur.execute("DROP TABLE " + defaults.table_name)
     db_schema = open(defaults.db_schema).read().splitlines()
+    new_tab = db_schema[1].split()
+    new_tab[2] = defaults.table_name
+    db_schema[1] = " ".join(new_tab)
     for s in db_schema:
         t = s.strip()
         if len(t):

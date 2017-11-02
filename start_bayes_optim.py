@@ -4,6 +4,6 @@ import sys
 
 defaults = PaperDefaults()
 print 'Initializing database'
-init_db(sys.argv[2])
-print 'Generating initial ' + sys.argv[1] + ' hyperparameter combos'
-generate_combos(int(sys.argv[1]))
+init_db(sys.argv[1])
+print 'Generating initial ' + sys.argv[2] + ' hyperparameter combos'
+generate_combos(int(sys.argv[2]))

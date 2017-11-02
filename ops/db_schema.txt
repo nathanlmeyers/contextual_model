@@ -1,2 +1,3 @@
-create table bayes_opt_min_exp (_id bigserial primary key, lesions varchar, alpha float, beta float, mu float, nu float, gamma float, delta float, f3a float, f3b float, f4 float, f5 float, f7 float, tbp float, tbtcso float, bw float, working boolean default False)
+DROP TABLE IF EXISTS status
+create table table_name (_id bigserial primary key, lesions varchar, alpha float, beta float, mu float, nu float, gamma float, delta float, f3a float, f3b float, f4 float, f5 float, f7 float, tbp float, tbtcso float, bw float, working boolean default False)
 create table status (_id bigserial primary key, fig_names varchar, working boolean default False);

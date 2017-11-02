@@ -11,9 +11,9 @@ from model_utils import iceil
 from ops.parameter_defaults import PaperDefaults
 import GPyOpt
 
-max_its = int(sys.argv[1])
+max_its = int(sys.argv[2])
 defaults = PaperDefaults().__dict__
-to_opt = int(sys.argv[2])
+to_opt = int(sys.argv[3])
 
 def adjust_parameters(defaults,hps):
     hps_keys = hps.keys()
