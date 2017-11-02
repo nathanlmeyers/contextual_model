@@ -193,7 +193,7 @@ def optimize_model(im,gt,extra_vars,parameters):
                         ' progress on lesion ' + lesion + ':',
                         suffix='Iteration time: ' +
                         str(np.around(end-start, 2)) +
-                        '; Correlation: ' + str(np.around(it_score, 5)),
+                        '; Correlation: ' + str(np.around(it_score, 5)) +'\n',
                         bar_length=30)
                     if parameters.gaussian_spatial or parameters.gaussian_channel:
                         break

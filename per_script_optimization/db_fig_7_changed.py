@@ -9,7 +9,10 @@ from ops.model_utils import iround
 from ops.parameter_defaults import PaperDefaults
 from ops.dumb_daemon_f7_hp_optim import optimize_model, create_stimuli
 import ops.model_cutils as cutils
+from sklearn.linear_model import RidgeCV
+from sklearn.preprocessing import StandardScaler
 
+reg_path = '/media/data_cifs/contextual_circuit/hmax_versions/dmely_hmax/models/ucircuits/contextual/working/ShevellMonnier2003.reg.pkl.std.srf3ssn9ssf29'
 
 def run(make_stims=False):
     defaults = PaperDefaults()
@@ -73,19 +76,38 @@ def run(make_stims=False):
     gt = np.vstack((shift_phase_paper,shift_anti_paper))
 
     #Also preload regs for postprocessing
-    regpath = os.path.join(defaults._WORKDIR,\
-        'ShevellMonnier2003.reg.pkl.std.srf%issn%issf%i' \
-            % (defaults._DEFAULT_PARAMETERS['srf'], defaults._DEFAULT_PARAMETERS['ssn'], defaults._DEFAULT_PARAMETERS['ssf']))
+    # regpath = os.path.join( #defaults._WORKDIR,\
+    #     'working\ShevellMonnier2003.reg.pkl.std.srf%issn%issf%i' \
+    #         % (defaults._DEFAULT_PARAMETERS['srf'], defaults._DEFAULT_PARAMETERS['ssn'], defaults._DEFAULT_PARAMETERS['ssf']))
+    joblib_stuff = {'reg_X_SX': RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit_intercept=True, gcv_mode=None, normalize=False, scoring=None, store_cv_values=False),
+                    'reg_Z_SX': RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit_intercept=True, gcv_mode=None, normalize=False, scoring=None, store_cv_values=False),
+                     'reg_Y_SO': RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit_intercept=True, gcv_mode=None, normalize=False, scoring=None, store_cv_values=False),
+                     'scaler_SO': StandardScaler(copy=True, with_mean=True, with_std=True),
+                     'reg_X_SO': RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit_intercept=True, gcv_mode=None,normalize=False, scoring=None, store_cv_values=False),
+                     'scaler_SX': StandardScaler(copy=True, with_mean=True, with_std=True),
+                     'reg_Y_SX': RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit_intercept=True, gcv_mode=None,normalize=False, scoring=None, store_cv_values=False),
+                     'reg_Z_SO': RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit_intercept=True, gcv_mode=None,normalize=False, scoring=None, store_cv_values=False)}
 
-    reg_X_SO = joblib.load(regpath)['reg_X_SO']
-    reg_Y_SO = joblib.load(regpath)['reg_Y_SO']
-    reg_Z_SO = joblib.load(regpath)['reg_Z_SO']
-    scaler_SO = joblib.load(regpath)['scaler_SO']
+    reg_X_SO = joblib_stuff['reg_X_SO']
+    reg_Y_SO = joblib_stuff['reg_Y_SO']
+    reg_Z_SO = joblib_stuff['reg_Z_SO']
+    scaler_SO = joblib_stuff['scaler_SO']
 
-    reg_X_SX = joblib.load(regpath)['reg_X_SX']
-    reg_Y_SX = joblib.load(regpath)['reg_Y_SX']
-    reg_Z_SX = joblib.load(regpath)['reg_Z_SX']
-    scaler_SX = joblib.load(regpath)['scaler_SX']
+    reg_X_SX = joblib_stuff['reg_X_SX']
+    reg_Y_SX = joblib_stuff['reg_Y_SX']
+    reg_Z_SX = joblib_stuff['reg_Z_SX']
+    scaler_SX = joblib_stuff['scaler_SX']
+
+    # import ipdb; ipdb.set_trace()
+    # reg_X_SO = joblib.load(regpath)['reg_X_SO']
+    # reg_Y_SO = joblib.load(regpath)['reg_Y_SO']
+    # reg_Z_SO = joblib.load(regpath)['reg_Z_SO']
+    # scaler_SO = joblib.load(regpath)['scaler_SO']
+    #
+    # reg_X_SX = joblib.load(regpath)['reg_X_SX']
+    # reg_Y_SX = joblib.load(regpath)['reg_Y_SX']
+    # reg_Z_SX = joblib.load(regpath)['reg_Z_SX']
+    # scaler_SX = joblib.load(regpath)['scaler_SX']
 
     so2image = cutils.get_XYZ2RGB_predictor(reg_X_SO, reg_Y_SO, reg_Z_SO, scaler_SO)
     sx2image = cutils.get_XYZ2RGB_predictor(reg_X_SX, reg_Y_SX, reg_Z_SX, scaler_SX)

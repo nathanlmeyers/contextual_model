@@ -125,7 +125,7 @@ def gather_parameter_data(lesion,table_name=defaults.table_name):
 
 def gather_perf_data(lesion,table_name=defaults.table_name):
     conn,cur = open_db(use_dict=True)
-    cur.execute("SELECT f3a,f3b,f4,f5,tbp,tbtcso,bw FROM %s WHERE lesions='%s'" % (table_name, lesion))
+    cur.execute("SELECT f3a,f3b,f4,f5,f7,tbp,tbtcso,bw FROM %s WHERE lesions='%s'" % (table_name, lesion))
     output = cur.fetchall()
     close_db(cur,conn)
     return output

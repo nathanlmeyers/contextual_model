@@ -13,11 +13,11 @@ from skimage.color import rgb2xyz
 from ops.db_utils import update_data, get_lesion_rows_from_db, count_sets
 from ops.parameter_defaults import PaperDefaults
 
-
 defaults = PaperDefaults().__dict__
 CIECAM02_CAT = sp.array([[ 0.7328,  0.4296, -0.1624],
                          [-0.7036,  1.6975,  0.0061],
                          [ 0.003 ,  0.0136,  0.9834]])
+max_its = int(sys.argv[2])
 
 def adjust_parameters(defaults,hps):
     hps_keys = hps.keys()
@@ -78,9 +78,9 @@ def printProgress(iteration, total, prefix = '', suffix = '', decimals = 1, bar_
 
 
 def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
-    start = timer()
+    #start = timer()
     sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))  # depreciated
-    # tf.group(tf.global_variables_initializer()) 
+    # tf.group(tf.global_variables_initializer())
     feed_dict = {ctx.X:x,
     #ctx.xi:default_parameters._DEFAULT_PARAMETERS['xi'].reshape(-1,1),
     ctx.alpha:default_parameters._DEFAULT_PARAMETERS['alpha'].reshape(-1,1),
@@ -102,9 +102,9 @@ def compute_shifts(x, sess, ctx, extra_vars, default_parameters):
         y = sess.run(ctx.out_I,feed_dict=feed_dict)
     elif extra_vars['return_var'] == 'O':
         y = sess.run(ctx.out_O,feed_dict=feed_dict)
-    end = timer()
-    run_time = end - start    
-    return y,run_time
+    #end = timer()
+    #run_time = end - start
+    return y#,run_time
 
 
 def prepare_hps(parameters,hp_set):
@@ -168,7 +168,8 @@ def optimize_model(gt,extra_vars,parameters):
             idx = 0; #keep a count
             #Initialize the session
             with tf.Session(config=tf.ConfigProto(allow_soft_placement = True)) as sess:
-                while 1: #while we have hp to run on this lesion
+                while idx < max_its: #while we have hp to run on this lesion
+                    start = timer()
                     hp_set = get_lesion_rows_from_db(lesion,extra_vars['figure_name'],get_one=True)
                     if hp_set is None:
                         break
@@ -187,7 +188,7 @@ def optimize_model(gt,extra_vars,parameters):
                                         ctx.run(x) #builds tf graph with shape of x
                                 build_graph = False
 
-                            y, run_time = compute_shifts(x=x, sess=sess, ctx=ctx, 
+                            y = compute_shifts(x=x, sess=sess, ctx=ctx,
                                  extra_vars=extra_vars, default_parameters=random_parameters)
 
                             phase,anti = model_utils.data_postprocessing(x,y,extra_vars)
@@ -200,9 +201,10 @@ def optimize_model(gt,extra_vars,parameters):
 
                         #Add to database
                         update_data(random_parameters,extra_vars['figure_name'],hp_set['_id'],it_score)
-                        printProgress(idx, num_sets, 
-                            prefix = extra_vars['figure_name'] + ' progress on lesion ' + lesion + ':', 
-                            suffix = 'Iteration time: ' + str(np.around(run_time,2)) + '; Correlation: ' + str(np.around(it_score,2)), 
+                        end = timer()
+                        printProgress(idx, num_sets,
+                            prefix = extra_vars['figure_name'] + ' progress on lesion ' + lesion + ':',
+                            suffix = 'Iteration time: ' + str(np.around(end-start,2)) + '; Correlation: ' + str(np.around(it_score,2)) + '\n',
                             bar_length = 30)
                     if parameters.gaussian_spatial or parameters.gaussian_channel:
                         break
