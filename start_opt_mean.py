@@ -40,7 +40,6 @@ else:
 
 #Update db and print status
 opt_list = ['alpha', 'beta', 'mu', 'nu', 'gamma', 'delta']
-samp_lists = [];
 id_var = len(hist);
 for i in range(opt_samp):
     hp_set = dict(zip(opt_list,next_samp[i].tolist()))
